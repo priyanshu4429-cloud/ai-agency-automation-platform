@@ -6,9 +6,14 @@ import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name } = await req.json();
-    if (!email || !password || !name) {
+    const { email, password, name, inviteCode } = await req.json();
+    if (!email || !password || !name || !inviteCode) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    }
+
+    const validCode = process.env.TEAM_INVITE_CODE || "AGENCY2026";
+    if (inviteCode !== validCode) {
+      return NextResponse.json({ error: "Invalid team invite code" }, { status: 403 });
     }
 
     const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
