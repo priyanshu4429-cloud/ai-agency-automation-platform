@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Search, Filter, MapPin, Phone, Mail, Globe, ChevronLeft, ChevronRight, Loader2, Building2 } from "lucide-react";
-import Link from "next/link";
+import { Search, Filter, MapPin, Phone, Mail, Globe, ChevronLeft, ChevronRight, Loader2, Building2, CheckSquare, Square, Zap } from "lucide-react";
 
 const statusOptions = ["all", "new", "contacted", "demo_sent", "follow_up", "negotiation", "won", "lost"];
 
@@ -16,6 +15,10 @@ export default function LeadsPage() {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  
+  // Bulk selection state
+  const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+  const [bulkProgress, setBulkProgress] = useState<{total: number, current: number, status: string} | null>(null);
 
   useEffect(() => {
     fetchLeads();
@@ -33,6 +36,7 @@ export default function LeadsPage() {
       const data = await res.json();
       setLeads(data.leads || []);
       setTotalPages(data.totalPages || 1);
+      setSelectedLeads([]); // Reset selection on page change
     } catch (err) {
       console.error(err);
     } finally {
@@ -45,15 +49,132 @@ export default function LeadsPage() {
     fetchLeads();
   }
 
+  function toggleSelectAll() {
+    if (selectedLeads.length === leads.length) {
+      setSelectedLeads([]);
+    } else {
+      setSelectedLeads(leads.map(l => l.id));
+    }
+  }
+
+  function toggleSelect(id: number) {
+    setSelectedLeads(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  }
+
+  async function handleBulkPitch() {
+    if (selectedLeads.length === 0) return;
+    
+    // First validate with backend
+    setBulkProgress({ total: selectedLeads.length, current: 0, status: "Initializing..." });
+    
+    try {
+      const res = await fetch("/api/leads/bulk-pitch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadIds: selectedLeads })
+      });
+      const data = await res.json();
+      
+      if (!data.success || !data.leads) {
+        alert(data.error || "Failed to initialize bulk pitch");
+        setBulkProgress(null);
+        return;
+      }
+      
+      const validLeads = data.leads;
+      setBulkProgress({ total: validLeads.length, current: 0, status: `Found ${validLeads.length} valid leads with emails.` });
+      
+      if (validLeads.length === 0) {
+        alert("None of the selected leads have an email address.");
+        setBulkProgress(null);
+        return;
+      }
+
+      // Process each lead sequentially to avoid timeouts/rate limits
+      for (let i = 0; i < validLeads.length; i++) {
+        const lead = validLeads[i];
+        
+        // 1. Generate Website
+        setBulkProgress({ total: validLeads.length, current: i + 1, status: `Generating website for ${lead.businessName}...` });
+        
+        try {
+          const webRes = await fetch(`/api/demo/generate/${lead.id}`, { method: "POST" });
+          if (!webRes.ok) throw new Error("Website generation failed");
+          
+          // 2. Send Email
+          setBulkProgress({ total: validLeads.length, current: i + 1, status: `Sending email to ${lead.businessName}...` });
+          
+          const emailRes = await fetch("/api/emails/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ leadId: lead.id })
+          });
+          if (!emailRes.ok) throw new Error("Email sending failed");
+          
+        } catch (err: any) {
+          console.error(`Failed for lead ${lead.id}:`, err);
+          // Continue to next lead even if one fails
+        }
+      }
+      
+      setBulkProgress({ total: validLeads.length, current: validLeads.length, status: "Bulk outreach completed!" });
+      setTimeout(() => {
+        setBulkProgress(null);
+        setSelectedLeads([]);
+        fetchLeads(); // Refresh list to show updated statuses
+      }, 3000);
+      
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred during bulk pitch.");
+      setBulkProgress(null);
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Leads</h1>
-        <p className="text-sm text-muted-foreground">Manage and track your business leads.</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Leads</h1>
+          <p className="text-sm text-muted-foreground">Manage and track your business leads.</p>
+        </div>
+        
+        {bulkProgress ? (
+          <div className="glass px-4 py-2 rounded-lg flex items-center gap-3 w-full sm:w-auto">
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+            <div className="text-sm">
+              <span className="font-semibold text-primary">{bulkProgress.current} / {bulkProgress.total}</span>
+              <span className="text-muted-foreground ml-2">{bulkProgress.status}</span>
+            </div>
+          </div>
+        ) : (
+          selectedLeads.length > 0 && (
+            <button
+              onClick={handleBulkPitch}
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-colors flex items-center gap-2 shadow-lg pulse-glow"
+            >
+              <Zap className="w-4 h-4" />
+              Auto-Pitch {selectedLeads.length} Leads
+            </button>
+          )
+        )}
       </div>
 
       <div className="glass rounded-xl p-4">
         <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={toggleSelectAll}
+            className="flex items-center justify-center p-2 rounded-lg bg-muted border border-border hover:bg-muted/80 transition-colors shrink-0"
+            title="Select All"
+          >
+            {leads.length > 0 && selectedLeads.length === leads.length ? (
+              <CheckSquare className="w-5 h-5 text-primary" />
+            ) : (
+              <Square className="w-5 h-5 text-muted-foreground" />
+            )}
+          </button>
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -95,57 +216,74 @@ export default function LeadsPage() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {leads.map((lead, i) => (
-              <motion.div
-                key={lead.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="glass rounded-xl p-5 card-hover cursor-pointer"
-                onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Building2 className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-medium truncate">{lead.businessName}</h3>
-                      <p className="text-xs text-muted-foreground capitalize">{lead.category}</p>
+            {leads.map((lead, i) => {
+              const isSelected = selectedLeads.includes(lead.id);
+              return (
+                <motion.div
+                  key={lead.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={`glass rounded-xl p-5 card-hover cursor-pointer relative ${isSelected ? 'ring-2 ring-primary bg-primary/5' : ''}`}
+                  onClick={() => toggleSelect(lead.id)}
+                >
+                  <div className="absolute top-4 right-4 z-10">
+                    {isSelected ? (
+                      <CheckSquare className="w-5 h-5 text-primary bg-[#0f172a] rounded" />
+                    ) : (
+                      <Square className="w-5 h-5 text-muted-foreground bg-[#0f172a] rounded" />
+                    )}
+                  </div>
+                  
+                  <div className="flex items-start justify-between mb-3 pr-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-medium truncate hover:text-primary transition-colors" onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/leads/${lead.id}`); }}>
+                          {lead.businessName}
+                        </h3>
+                        <p className="text-xs text-muted-foreground capitalize">{lead.category}</p>
+                      </div>
                     </div>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium status-${lead.status} text-white`}>
-                    {lead.status.replace(/_/g, " ")}
-                  </span>
-                </div>
-                <div className="space-y-1 text-sm">
-                  {lead.city && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>{lead.city}{lead.state ? `, ${lead.state}` : ""}</span>
-                    </div>
-                  )}
-                  {lead.phone && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Phone className="w-3.5 h-3.5" />
-                      <span>{lead.phone}</span>
-                    </div>
-                  )}
-                  {lead.email && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Mail className="w-3.5 h-3.5" />
-                      <span className="truncate">{lead.email}</span>
-                    </div>
-                  )}
-                  {lead.website && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Globe className="w-3.5 h-3.5" />
-                      <span className="truncate">{lead.website}</span>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                  
+                  <div className="mb-3">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium status-${lead.status} text-white inline-block`}>
+                      {lead.status.replace(/_/g, " ")}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-1 text-sm">
+                    {lead.city && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span>{lead.city}{lead.state ? `, ${lead.state}` : ""}</span>
+                      </div>
+                    )}
+                    {lead.phone && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>{lead.phone}</span>
+                      </div>
+                    )}
+                    {lead.email && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Mail className="w-3.5 h-3.5" />
+                        <span className="truncate">{lead.email}</span>
+                      </div>
+                    )}
+                    {lead.website && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Globe className="w-3.5 h-3.5" />
+                        <span className="truncate">{lead.website}</span>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
 
           {totalPages > 1 && (

@@ -1,31 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const CATEGORY_MAP: Record<string, string> = {
-  restaurant: "restaurant", cafe: "cafe", bar: "bar", hospital: "hospital",
-  clinic: "clinic", pharmacy: "pharmacy", school: "school", university: "university",
-  hotel: "hotel", motel: "motel", gym: "gym", salon: "hair salon",
-  beauty: "beauty shop", hardware: "hardware store", electrician: "electrician",
-  plumber: "plumber", bakery: "bakery", butcher: "butcher", dentist: "dentist",
-  bank: "bank", supermarket: "supermarket", convenience: "convenience store",
-  laundry: "laundry", car_repair: "car repair", florist: "florist",
-  bookstore: "book store", pet: "pet shop", furniture: "furniture store",
-  electronics: "electronics shop", clothing: "clothing store", shoe: "shoe store",
-  jewelry: "jewelry store", optician: "optician", travel_agency: "travel agency",
-  real_estate: "real estate", lawyer: "lawyer", accountant: "accountant",
-  insurance: "insurance office", advertising: "advertising agency",
+  restaurant: "amenity=restaurant", 
+  cafe: "amenity=cafe", 
+  bar: "amenity=bar", 
+  hospital: "amenity=hospital",
+  clinic: "amenity=clinic", 
+  pharmacy: "amenity=pharmacy", 
+  school: "amenity=school", 
+  university: "amenity=university",
+  hotel: "tourism=hotel", 
+  motel: "tourism=motel", 
+  gym: "leisure=fitness_centre", 
+  salon: "shop=hairdresser",
+  beauty: "shop=beauty", 
+  hardware: "shop=hardware", 
+  electrician: "craft=electrician",
+  plumber: "craft=plumber", 
+  bakery: "shop=bakery", 
+  butcher: "shop=butcher", 
+  dentist: "amenity=dentist",
+  bank: "amenity=bank", 
+  supermarket: "shop=supermarket", 
+  convenience: "shop=convenience",
+  laundry: "shop=laundry", 
+  car_repair: "shop=car_repair", 
+  florist: "shop=florist",
+  bookstore: "shop=books", 
+  pet: "shop=pet", 
+  furniture: "shop=furniture",
+  electronics: "shop=electronics", 
+  clothing: "shop=clothes", 
+  shoe: "shop=shoes",
+  jewelry: "shop=jewelry", 
+  optician: "shop=optician", 
+  travel_agency: "shop=travel_agency",
+  real_estate: "office=estate_agent", 
+  lawyer: "office=lawyer", 
+  accountant: "office=accountant",
+  insurance: "office=insurance", 
+  advertising: "office=advertising_agency",
 };
 
-type NominatimResult = {
-  osm_id?: number;
-  osm_type?: string;
-  name?: string;
-  display_name?: string;
-  lat?: string;
-  lon?: string;
-  type?: string;
-  category?: string;
-  address?: Record<string, string>;
-  extratags?: Record<string, string>;
+type OverpassElement = {
+  type: string;
+  id: number;
+  lat?: number;
+  lon?: number;
+  center?: { lat: number; lon: number };
+  tags?: Record<string, string>;
 };
 
 type SourcePhoto = {
@@ -101,93 +124,107 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const city = searchParams.get("city")?.trim();
     const category = searchParams.get("category")?.trim() || "restaurant";
-    const requestedLimit = Number.parseInt(searchParams.get("limit") || "20", 10);
-    const limit = Number.isNaN(requestedLimit) ? 20 : Math.min(Math.max(requestedLimit, 1), 40);
+    const requestedLimit = Number.parseInt(searchParams.get("limit") || "100", 10);
+    const limit = Number.isNaN(requestedLimit) ? 100 : Math.min(Math.max(requestedLimit, 1), 200);
 
     if (!city) return NextResponse.json({ error: "City is required" }, { status: 400 });
-    if (!CATEGORY_MAP[category]) {
-      return NextResponse.json(
-        { error: "Unsupported category", supportedCategories: Object.keys(CATEGORY_MAP) },
-        { status: 400 }
+    
+    // Default to amenity if category is not explicitly mapped
+    const osmTag = CATEGORY_MAP[category] || `amenity=${category}`;
+    const [tagKey, tagValue] = osmTag.split("=");
+
+    console.log("OVERPASS BUSINESS SEARCH", { city, category, tagKey, tagValue, limit });
+
+    // Build Overpass API query
+    const overpassQuery = `
+      [out:json][timeout:25];
+      area[name="${city}"]->.searchArea;
+      (
+        node["${tagKey}"="${tagValue}"](area.searchArea);
+        way["${tagKey}"="${tagValue}"](area.searchArea);
+        relation["${tagKey}"="${tagValue}"](area.searchArea);
       );
-    }
+      out center ${limit};
+      out tags;
+    `;
 
-    const query = `${CATEGORY_MAP[category]} in ${city}`;
-    console.log("NOMINATIM BUSINESS SEARCH", { query, limit });
-
-    const url = new URL("https://nominatim.openstreetmap.org/search");
-    url.searchParams.set("format", "jsonv2");
-    url.searchParams.set("q", query);
-    url.searchParams.set("limit", limit.toString());
-    url.searchParams.set("addressdetails", "1");
-    url.searchParams.set("extratags", "1");
-    url.searchParams.set("namedetails", "1");
-    url.searchParams.set("dedupe", "1");
-
-    const response = await fetch(url.toString(), {
+    const response = await fetch("https://overpass-api.de/api/interpreter", {
+      method: "POST",
       headers: {
-        "User-Agent": "AIAgencyAutomation/1.0 (business-search; contact=local-development)",
-        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "AIAgencyAutomation/1.0 (business-search)",
       },
+      body: `data=${encodeURIComponent(overpassQuery)}`,
       cache: "no-store",
     });
 
     const responseText = await response.text();
     if (!response.ok) {
-      throw new Error(`Nominatim HTTP ${response.status}: ${responseText.slice(0, 300)}`);
+      throw new Error(`Overpass HTTP ${response.status}: ${responseText.slice(0, 300)}`);
     }
 
-    let data: NominatimResult[];
+    let data: { elements?: OverpassElement[] };
     try {
       data = JSON.parse(responseText);
     } catch {
-      throw new Error(`Nominatim returned invalid JSON: ${responseText.slice(0, 300)}`);
+      throw new Error(`Overpass returned invalid JSON: ${responseText.slice(0, 300)}`);
     }
-    if (!Array.isArray(data)) throw new Error("Nominatim returned an invalid response");
+    
+    if (!data.elements || !Array.isArray(data.elements)) {
+      throw new Error("Overpass returned an invalid response structure");
+    }
 
-    const businesses = data.map((place) => {
-      const address = place.address || {};
-      const extras = place.extratags || {};
-      const website = extras.website || extras["contact:website"] || extras.url || null;
-      const phone = extras.phone || extras["contact:phone"] || extras.mobile || extras["contact:mobile"] || null;
-      const email = extras.email || extras["contact:email"] || null;
-      const businessName = place.name || place.display_name?.split(",")[0] || `${category} business`;
-      const sourcePhotos = extractExactSourcePhotos(extras, businessName);
+    const businesses = data.elements
+      .filter((el) => el.tags && el.tags.name) // Only include businesses with a name
+      .map((el) => {
+        const tags = el.tags || {};
+        const website = tags.website || tags["contact:website"] || tags.url || null;
+        const phone = tags.phone || tags["contact:phone"] || tags.mobile || tags["contact:mobile"] || null;
+        const email = tags.email || tags["contact:email"] || null;
+        const businessName = tags.name || `${category} business`;
+        
+        const sourcePhotos = extractExactSourcePhotos(tags, businessName);
+        
+        // Try to construct an address
+        const street = tags["addr:street"] || "";
+        const housenumber = tags["addr:housenumber"] || "";
+        const cityTag = tags["addr:city"] || city;
+        const addressString = [housenumber, street, cityTag].filter(Boolean).join(" ") || cityTag;
 
-      return {
-        osmId: place.osm_id?.toString() || null,
-        osmType: place.osm_type || null,
-        businessName,
-        category,
-        address: place.display_name || city,
-        city: address.city || address.town || address.village || address.municipality || city,
-        state: address.state || null,
-        country: address.country || null,
-        postalCode: address.postcode || null,
-        phone,
-        email,
-        website,
-        latitude: place.lat || null,
-        longitude: place.lon || null,
-        hasWebsite: Boolean(website),
-        media: {
-          sourcePhotos,
-          coverPhoto: sourcePhotos.find((photo) => photo.kind === "cover") || null,
-          policy: "exact_osm_or_wikimedia_evidence_only",
-        },
-        tags: {
-          type: place.type,
-          category: place.category,
-          ...extras,
-        },
-      };
-    });
+        const lat = el.lat || el.center?.lat || null;
+        const lon = el.lon || el.center?.lon || null;
 
+        return {
+          osmId: el.id.toString(),
+          osmType: el.type,
+          businessName,
+          category,
+          address: addressString,
+          city: cityTag,
+          state: tags["addr:state"] || null,
+          country: tags["addr:country"] || null,
+          postalCode: tags["addr:postcode"] || null,
+          phone,
+          email,
+          website,
+          latitude: lat?.toString() || null,
+          longitude: lon?.toString() || null,
+          hasWebsite: Boolean(website),
+          media: {
+            sourcePhotos,
+            coverPhoto: sourcePhotos.find((photo) => photo.kind === "cover") || null,
+            policy: "exact_osm_or_wikimedia_evidence_only",
+          },
+          tags,
+        };
+      });
+
+    // Remove exact duplicates
     const uniqueBusinesses = Array.from(
       new Map(businesses.map((business) => [`${business.osmType}-${business.osmId}`, business])).values()
     );
 
-    console.log("BUSINESS SEARCH SUCCESS", {
+    console.log("OVERPASS SEARCH SUCCESS", {
       city,
       category,
       found: uniqueBusinesses.length,
@@ -199,7 +236,7 @@ export async function GET(req: NextRequest) {
       total: uniqueBusinesses.length,
       city,
       category,
-      source: "OpenStreetMap / Nominatim",
+      source: "OpenStreetMap / Overpass API",
       mediaPolicy: "exact OSM or Wikimedia evidence only",
     });
   } catch (error: unknown) {
