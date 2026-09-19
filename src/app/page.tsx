@@ -4,68 +4,44 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Sparkles,
-  Search,
-  Globe,
-  Mail,
-  BarChart3,
-  Zap,
   ArrowRight,
-  Shield,
-  Users,
-  Clock,
-  ChevronDown,
+  Code,
+  Smartphone,
+  Search,
+  CheckCircle2,
   Menu,
   X,
+  MessageCircle,
+  Layout,
+  Rocket,
+  Lock
 } from "lucide-react";
 import Link from "next/link";
 import ParticleBackground from "@/components/ParticleBackground";
 
-const features = [
+const services = [
+  {
+    icon: Layout,
+    title: "Custom Web Design",
+    description: "Beautiful, highly-converting websites tailored specifically to your brand and business goals.",
+  },
+  {
+    icon: Smartphone,
+    title: "Responsive Development",
+    description: "Flawless experience across all devices. Your website will look perfect on mobile, tablet, and desktop.",
+  },
   {
     icon: Search,
-    title: "Smart Business Discovery",
-    description: "Automatically find local businesses using OpenStreetMap data with advanced filtering and categorization.",
-  },
-  {
-    icon: Globe,
-    title: "AI Website Generation",
-    description: "Generate complete multi-page professional websites with AI-powered content, SEO, and beautiful designs.",
-  },
-  {
-    icon: Mail,
-    title: "Automated Outreach",
-    description: "Send personalized emails and WhatsApp messages to prospects with AI-generated compelling copy.",
-  },
-  {
-    icon: BarChart3,
-    title: "Full CRM Pipeline",
-    description: "Track leads from discovery to conversion with visual pipeline, analytics, and revenue tracking.",
-  },
-  {
-    icon: Zap,
-    title: "Instant Deployment",
-    description: "Deploy live demo websites in seconds with public URLs ready to share with prospects.",
-  },
-  {
-    icon: Shield,
-    title: "Enterprise Security",
-    description: "Role-based authentication, secure data handling, and audit logs for complete peace of mind.",
+    title: "SEO Optimization",
+    description: "Built-in search engine optimization to ensure your local customers can actually find you on Google.",
   },
 ];
 
-const steps = [
-  { step: "01", title: "Search", desc: "Find businesses without websites in any city" },
-  { step: "02", title: "Detect", desc: "Automatically verify if they have a web presence" },
-  { step: "03", title: "Generate", desc: "AI creates a stunning multi-page website" },
-  { step: "04", title: "Deploy", desc: "Live demo URL ready in seconds" },
-  { step: "05", title: "Outreach", desc: "Send personalized emails automatically" },
-  { step: "06", title: "Convert", desc: "Track and close deals in the CRM" },
-];
-
-const testimonials = [
-  { name: "Alex Rivera", role: "Agency Owner", text: "This tool 10x'd our outreach. We went from 5 leads a day to 50+ with zero extra effort." },
-  { name: "Sarah Chen", role: "Freelance Developer", text: "The AI-generated websites are incredible. My clients think I spent weeks on them." },
-  { name: "Marcus Johnson", role: "Marketing Director", text: "Best investment for our agency. The CRM alone saved us $500/month on other tools." },
+const processSteps = [
+  { step: "01", title: "Free Consultation", desc: "We discuss your business needs and vision." },
+  { step: "02", title: "Custom Demo", desc: "We build a free preview of your website." },
+  { step: "03", title: "Development", desc: "We finalize the design and add your content." },
+  { step: "04", title: "Launch", desc: "Your website goes live in as little as 48 hours." },
 ];
 
 export default function Home() {
@@ -78,6 +54,9 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const whatsappNumber = "919999999999"; // Can be dynamic or env var
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hi! I would like to book a free consultation for a new website.")}`;
+
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <ParticleBackground />
@@ -85,139 +64,72 @@ export default function Home() {
       {/* Navbar */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrollY > 50 ? "glass" : "bg-transparent"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between h-20">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Code className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold gradient-text">AI Agency V2</span>
+              <span className="text-2xl font-black tracking-tight text-white">Elite<span className="text-blue-500">Web.</span></span>
             </Link>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
-              <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Testimonials</a>
-              <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-              <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Sign In</Link>
-              <Link href="/register" className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
-                Get Started
-              </Link>
+              <a href="#services" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">Services</a>
+              <a href="#process" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">Our Process</a>
+              <a href={whatsappLink} target="_blank" rel="noreferrer" className="px-6 py-2.5 rounded-xl bg-white text-blue-600 text-sm font-bold hover:bg-zinc-100 transition-all flex items-center gap-2 shadow-lg hover:scale-105">
+                <MessageCircle className="w-4 h-4" /> Book Consultation
+              </a>
             </div>
-            <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
         {mobileMenuOpen && (
-          <div className="md:hidden glass p-4 space-y-4">
-            <a href="#features" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Features</a>
-            <a href="#how-it-works" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
-            <a href="#testimonials" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
-            <Link href="/pricing" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-            <Link href="/login" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
-            <Link href="/register" className="block px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium text-center" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
+          <div className="md:hidden glass p-4 space-y-4 border-t border-white/10">
+            <a href="#services" className="block text-sm font-medium text-zinc-300" onClick={() => setMobileMenuOpen(false)}>Services</a>
+            <a href="#process" className="block text-sm font-medium text-zinc-300" onClick={() => setMobileMenuOpen(false)}>Our Process</a>
+            <a href={whatsappLink} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-blue-600 text-sm font-bold" onClick={() => setMobileMenuOpen(false)}>
+              <MessageCircle className="w-4 h-4" /> Book Consultation
+            </a>
           </div>
         )}
       </nav>
 
       {/* Hero */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="relative pt-40 pb-20 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[90vh]">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-light mb-8">
-              <Sparkles className="w-4 h-4 text-accent" />
-              <span className="text-sm text-muted-foreground">Powered by Advanced AI</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-light mb-8 border border-white/10">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span className="text-sm font-medium text-zinc-300">Premium Web Development Agency</span>
             </div>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-              Automate Your
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight mb-8 leading-[1.1] text-white">
+              We Build Websites That
               <br />
-              <span className="gradient-text">Agency Growth</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Grow Your Business
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Find local businesses, generate AI-powered websites, deploy live demos, and manage your entire sales pipeline — all on autopilot.
+            <p className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Stop losing customers to your competitors. Get a stunning, fast, and SEO-optimized website live in less than 48 hours.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/pricing" className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center gap-2 hover:bg-primary/90 transition-all pulse-glow">
-                View Pricing & Start Trial <ArrowRight className="w-5 h-5" />
-              </Link>
-              <a href="#how-it-works" className="px-8 py-4 rounded-xl glass text-foreground font-semibold hover:bg-white/5 transition-all">
-                See How It Works
+              <a href={whatsappLink} target="_blank" rel="noreferrer" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-[0_0_40px_rgba(37,99,235,0.4)]">
+                Book a Free Consultation <ArrowRight className="w-5 h-5" />
+              </a>
+              <a href="#services" className="w-full sm:w-auto px-8 py-4 rounded-xl glass text-white font-semibold hover:bg-white/10 transition-all text-center">
+                View Our Services
               </a>
             </div>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="mt-20 relative"
-          >
-            <div className="glass rounded-2xl p-2 max-w-5xl mx-auto">
-              <div className="bg-card rounded-xl overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-                  <div className="w-3 h-3 rounded-full bg-destructive" />
-                  <div className="w-3 h-3 rounded-full bg-warning" />
-                  <div className="w-3 h-3 rounded-full bg-success" />
-                  <span className="ml-4 text-xs text-muted-foreground">AI Agency Dashboard</span>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="glass-light rounded-lg p-4">
-                    <div className="text-2xl font-bold text-primary">1,247</div>
-                    <div className="text-sm text-muted-foreground">Leads Discovered</div>
-                  </div>
-                  <div className="glass-light rounded-lg p-4">
-                    <div className="text-2xl font-bold text-secondary">342</div>
-                    <div className="text-sm text-muted-foreground">Websites Generated</div>
-                  </div>
-                  <div className="glass-light rounded-lg p-4">
-                    <div className="text-2xl font-bold text-accent">$48,920</div>
-                    <div className="text-sm text-muted-foreground">Revenue Generated</div>
-                  </div>
-                </div>
-                <div className="px-6 pb-6">
-                  <div className="glass-light rounded-lg p-4 h-32 flex items-end gap-2">
-                    {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
-                      <div key={i} className="flex-1 rounded-t bg-primary/60" style={{ height: `${h}%` }} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { label: "Businesses Found", value: "50K+" },
-              { label: "Websites Built", value: "12K+" },
-              { label: "Emails Sent", value: "100K+" },
-              { label: "Revenue Generated", value: "$2M+" },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
-              >
-                <div className="text-3xl sm:text-4xl font-bold gradient-text">{stat.value}</div>
-                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="py-24 px-4">
+      {/* Services */}
+      <section id="services" className="py-24 px-4 bg-black/40 border-y border-white/5">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -225,146 +137,126 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything You Need</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              A complete suite of tools to automate your agency from lead discovery to customer conversion.
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass rounded-2xl p-6 card-hover"
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From search to sale in 6 simple steps. Fully automated.
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {steps.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass rounded-2xl p-6 relative overflow-hidden"
-              >
-                <div className="absolute top-4 right-4 text-5xl font-bold text-white/5">{s.step}</div>
-                <div className="text-3xl font-bold gradient-text mb-2">{s.step}</div>
-                <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
-                <p className="text-sm text-muted-foreground">{s.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Loved by Agencies</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              See what our users are saying about AI Agency Automation.
+            <h2 className="text-3xl sm:text-5xl font-black text-white mb-6">What We Do</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
+              We provide end-to-end digital solutions to establish your brand online and drive real revenue.
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
+            {services.map((service, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="glass rounded-2xl p-6 card-hover"
+                className="glass rounded-3xl p-8 card-hover border border-white/5 group"
               >
-                <div className="flex gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Sparkles key={star} className="w-4 h-4 text-accent" />
-                  ))}
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <service.icon className="w-7 h-7 text-blue-400" />
                 </div>
-                <p className="text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-sm font-bold">
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">{t.name}</div>
-                    <div className="text-xs text-muted-foreground">{t.role}</div>
-                  </div>
-                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">{service.title}</h3>
+                <p className="text-zinc-400 leading-relaxed">{service.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-4">
+      {/* Process */}
+      <section id="process" className="py-32 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl sm:text-5xl font-black text-white mb-6">How We Work</h2>
+              <p className="text-zinc-400 text-lg mb-8 leading-relaxed">
+                We've streamlined the web design process so you don't have to deal with endless meetings or technical jargon. From idea to launch in days, not months.
+              </p>
+              
+              <div className="space-y-6">
+                {[
+                  "No upfront commitment required",
+                  "Free custom demo before you buy",
+                  "Dedicated support and maintenance",
+                  "Lightning fast delivery"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <span className="text-zinc-300 font-medium">{item}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <a href={whatsappLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 mt-10 px-8 py-4 rounded-xl bg-white text-black font-bold hover:bg-zinc-200 transition-colors">
+                Start Your Project <Rocket className="w-5 h-5" />
+              </a>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {processSteps.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="glass rounded-3xl p-6 relative overflow-hidden border border-white/5"
+                >
+                  <div className="absolute -top-4 -right-4 text-8xl font-black text-white/5">{s.step}</div>
+                  <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">{s.step}</div>
+                  <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{s.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-4 bg-gradient-to-t from-blue-900/20 to-transparent">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto glass rounded-3xl p-12 text-center"
+          className="max-w-5xl mx-auto glass rounded-[3rem] p-12 sm:p-20 text-center border border-white/10 relative overflow-hidden"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Automate?</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-            Join thousands of agencies already using AI Agency Automation to scale their business.
-          </p>
-          <Link href="/pricing" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all pulse-glow">
-            See Pricing & Start Free <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+          <div className="relative z-10">
+            <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">Ready for a new website?</h2>
+            <p className="text-xl text-zinc-300 max-w-2xl mx-auto mb-10">
+              Message us on WhatsApp right now and let's get your business online today.
+            </p>
+            <a href={whatsappLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-white text-blue-600 font-black text-lg hover:scale-105 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+              <MessageCircle className="w-6 h-6" /> Chat on WhatsApp
+            </a>
+          </div>
         </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-12 px-4">
+      <footer className="border-t border-white/5 py-12 px-4 bg-black/40">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+                <Code className="w-4 h-4 text-white" />
               </div>
-              <span className="text-lg font-bold gradient-text">AI Agency V2</span>
+              <span className="text-xl font-black text-white">Elite<span className="text-blue-500">Web.</span></span>
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+            <div className="text-sm text-zinc-500">
+              &copy; {new Date().getFullYear()} EliteWeb Design Agency. All rights reserved.
             </div>
-            <div className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} AI Agency Automation V2
+            <div className="flex items-center gap-4">
+              <Link href="/login" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors flex items-center gap-1">
+                <Lock className="w-3 h-3" /> Staff Login
+              </Link>
             </div>
           </div>
         </div>
