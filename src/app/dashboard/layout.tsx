@@ -103,8 +103,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             })}
           </nav>
 
-          <div className="p-4 border-t border-border">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="p-4 border-t border-border space-y-4">
+            {/* Upgrade Banner */}
+            <div className="bg-gradient-to-br from-blue-500/10 to-purple-600/10 border border-blue-500/20 rounded-xl p-4 text-center">
+              <div className="w-10 h-10 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-3">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <h4 className="text-sm font-semibold mb-1">Upgrade to Pro</h4>
+              <p className="text-xs text-muted-foreground mb-3">
+                Get unlimited leads and AI websites
+              </p>
+              <Link href="/pricing" className="block w-full py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors pulse-glow">
+                View Plans
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-sm font-bold">
                 {user?.name?.[0] || "U"}
               </div>

@@ -96,6 +96,7 @@ export default function Home() {
               <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
               <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
               <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Testimonials</a>
+              <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
               <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Sign In</Link>
               <Link href="/register" className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                 Get Started
@@ -111,6 +112,7 @@ export default function Home() {
             <a href="#features" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Features</a>
             <a href="#how-it-works" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
             <a href="#testimonials" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
+            <Link href="/pricing" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
             <Link href="/login" className="block text-sm text-muted-foreground" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
             <Link href="/register" className="block px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium text-center" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
           </div>
@@ -138,8 +140,8 @@ export default function Home() {
               Find local businesses, generate AI-powered websites, deploy live demos, and manage your entire sales pipeline — all on autopilot.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/register" className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center gap-2 hover:bg-primary/90 transition-all pulse-glow">
-                Start Free Trial <ArrowRight className="w-5 h-5" />
+              <Link href="/pricing" className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center gap-2 hover:bg-primary/90 transition-all pulse-glow">
+                View Pricing & Start Trial <ArrowRight className="w-5 h-5" />
               </Link>
               <a href="#how-it-works" className="px-8 py-4 rounded-xl glass text-foreground font-semibold hover:bg-white/5 transition-all">
                 See How It Works
@@ -340,8 +342,8 @@ export default function Home() {
           <p className="text-muted-foreground max-w-xl mx-auto mb-8">
             Join thousands of agencies already using AI Agency Automation to scale their business.
           </p>
-          <Link href="/register" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all pulse-glow">
-            Get Started Free <ArrowRight className="w-5 h-5" />
+          <Link href="/pricing" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all pulse-glow">
+            See Pricing & Start Free <ArrowRight className="w-5 h-5" />
           </Link>
         </motion.div>
       </section>
