@@ -1478,11 +1478,31 @@ export default function DemoPage() {
           target="_blank"
           rel="noreferrer"
           aria-label="Contact on WhatsApp"
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-500 text-white shadow-2xl transition hover:-translate-y-1 hover:scale-105"
+          className="fixed bottom-24 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-500 text-white shadow-2xl transition hover:-translate-y-1 hover:scale-105"
         >
           <MessageCircle className="h-6 w-6" />
         </a>
       )}
+
+      {/* Sticky Agency CTA for the Client */}
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-700 text-white p-3 sm:p-4 z-[100] flex flex-col sm:flex-row items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.3)] border-t border-white/20 backdrop-blur-md">
+        <div className="flex items-center gap-3 mb-3 sm:mb-0">
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center pulse-glow hidden sm:flex">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <div className="font-bold text-sm sm:text-base">This is a custom AI demo for {website.businessName}</div>
+            <div className="text-xs text-white/90">Like what you see? Claim this exact website for your business today.</div>
+          </div>
+        </div>
+        <a 
+          href="/" 
+          target="_blank"
+          className="px-6 py-2.5 bg-white text-blue-600 rounded-xl font-bold text-sm hover:bg-zinc-100 transition-all flex items-center gap-2 w-full sm:w-auto justify-center shadow-lg"
+        >
+          Claim This Website <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
     </main>
   );
 }

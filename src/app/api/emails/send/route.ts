@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
 
     if (!subject || !body) {
       const prompt = `
-Write a personalized professional outreach email.
+Write a highly convincing, personalized sales outreach email from a Web Design Agency.
 
 Business name:
 ${lead.businessName}
@@ -136,23 +136,18 @@ Demo website URL:
 ${demoUrl || "Demo available on request"}
 
 Requirements:
-
-- Keep the email professional and friendly.
-- Keep it under 150 words.
-- Clearly mention the business name.
-- Mention that we noticed their business.
-- Explain that we created a free website preview.
-- Include the demo website URL naturally if available.
-- Explain that the preview is only a demo.
-- Mention that a fully customized website can be created based on their branding, services and requirements.
-- End with a simple call to action.
-- Do not use markdown.
-- Do not include code fences.
+- Keep the email short, punchy, and highly professional.
+- State that their current online presence could be improved to get more customers.
+- Explain that we took the liberty to create a FREE custom website demo for them.
+- Include the demo website URL prominently.
+- Explain that if they like the demo, we can get it live for their business within 24-48 hours for a very reasonable price.
+- End with a strong call to action asking them to reply to the email or click the link in the demo.
+- Do not use markdown or code fences.
 
 Return ONLY valid JSON using this exact structure:
 
 {
-  "subject": "Email subject",
+  "subject": "Email subject (Make it catchy, e.g. 'A new website for [Business]')",
   "body": "Email body"
 }
 `;
@@ -180,32 +175,31 @@ Return ONLY valid JSON using this exact structure:
     }
 
     if (!subject) {
-      subject = `Free Website Preview for ${lead.businessName}`;
+      subject = `A new custom website for ${lead.businessName} (Free Demo inside)`;
     }
 
     if (!body) {
       body = `Hi ${lead.businessName} team,
 
-I came across your ${lead.category} business in ${
+I was looking for ${lead.category} businesses in ${
         lead.city || "your city"
-      } and wanted to reach out.
+      } and noticed that your online presence could be improved to bring in more customers.
 
-We prepared a free website preview for ${lead.businessName} to show how a modern online presence could look.
+As a web design agency, we took the liberty of creating a FREE custom website preview specifically for ${lead.businessName}.
 
 ${
   demoUrl
-    ? `View your free website preview here:
-
+    ? `You can view your working demo right here:
 ${demoUrl}`
-    : "Your free website preview is ready."
+    : "Your custom demo is ready."
 }
 
-This is only a demo preview. We can create a fully customized and professional website based on your branding, services, menu and business requirements.
+If you like what you see, we can fully customize it with your exact services, photos, and branding, and get it live in just 24-48 hours.
 
-Would you be interested in discussing a customized website for ${lead.businessName}?
+Take a look at the demo and let me know if you'd like to discuss getting this live for your business!
 
 Best regards,
-AI Agency Team`;
+Your Web Design Partner`;
     }
 
     const fromEmail =
