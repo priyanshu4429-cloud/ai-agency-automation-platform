@@ -1,28 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search,
-  Globe,
-  Mail,
-  BarChart3,
+  Sparkles,
   ArrowRight,
-  PlayCircle,
-  Users,
-  Zap,
-  MapPin,
-  Laptop,
+  Code,
+  Smartphone,
+  Search,
   CheckCircle2,
   Menu,
   X,
-  Target,
-  LineChart,
-  MessageSquare,
-  Star,
+  MessageCircle,
+  Monitor,
+  ShoppingCart,
+  Database,
+  Megaphone,
+  Palette,
+  Lock,
   ChevronRight,
-  MousePointerClick,
-  Sparkles
+  Users,
+  Globe,
+  Zap,
+  BarChart3,
+  MapPin,
+  Laptop,
+  Mail
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -41,81 +44,92 @@ const steps = [
   { step: "04", icon: BarChart3, title: "Track & Convert", desc: "Manage leads, tasks and deals in your CRM." },
 ];
 
-const solutions = [
-  { icon: Globe, title: "AI Website Generation", desc: "Beautiful, modern websites generated in seconds." },
-  { icon: Search, title: "Lead Intelligence", desc: "Find verified businesses without websites." },
-  { icon: LineChart, title: "Competitor Analysis", desc: "Analyze their online presence and gaps." },
-  { icon: MessageSquare, title: "Automated Outreach", desc: "Send personalized emails at scale." },
-  { icon: Database, title: "CRM & Pipeline", desc: "Track leads, tasks and deals easily." },
-  { icon: Target, title: "SEO & Content", desc: "AI-generated SEO content to rank better." },
+const services = [
+  { id: "web", icon: Monitor, title: "Website Development", desc: "Custom designed, lightning-fast websites built for conversion and scale." },
+  { id: "ecommerce", icon: ShoppingCart, title: "Custom E-Commerce", desc: "Tailored electronic commerce platforms built with robust modern technologies to suit your specific business needs." },
+  { id: "mobile", icon: Smartphone, title: "Mobile App Development", desc: "Native and cross-platform applications that deliver seamless user experiences." },
+  { id: "marketing", icon: Megaphone, title: "Digital Marketing", desc: "Data-driven marketing strategies to increase visibility and drive qualified leads." },
+  { id: "design", icon: Palette, title: "Graphic Designing", desc: "Stunning visual identities, branding, and UI/UX design that captivates." },
+  { id: "crm", icon: Database, title: "ERP & CRM Systems", desc: "Custom business management solutions to streamline your operations." }
 ];
 
-// Placeholder component for Database icon since it's not exported from lucide-react directly in some versions
-function Database(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
-      <path d="M3 12A9 3 0 0 0 21 12" />
-    </svg>
-  );
-}
+const technologies = [
+  { name: "E-commerce Solutions", sub: "SHOPPING EXPERIENCE", icon: "🛒" },
+  { name: "PHP", sub: "BACKEND", icon: "🐘" },
+  { name: "Laravel", sub: "FRAMEWORK", icon: "🔴" },
+  { name: "CodeIgniter", sub: "FRAMEWORK", icon: "🔥" },
+  { name: "WordPress", sub: "CMS", icon: "W" },
+  { name: "Shopify", sub: "E-COMMERCE", icon: "🛍️" },
+];
 
-const pricing = [
+const pricingPlans = [
   {
-    name: "Starter",
-    desc: "Perfect for individuals",
-    price: "₹1,999",
-    period: "/month",
-    features: ["500 leads per month", "100 AI websites", "Email outreach (basic)", "CRM access"],
+    name: "Standard Plan",
+    price: "7,999",
+    originalPrice: "10,000",
+    gst: "1440",
+    features: [
+      "5 pages Website",
+      "1 Year Free Domain Name (.com .in .org)",
+      "1 Year Free Cloud Hosting",
+      "Basic SEO Setup",
+      "Mobile Responsive Design",
+      "Contact Form Integration"
+    ],
     popular: false,
+    color: "blue"
   },
   {
-    name: "Growth",
-    desc: "For small teams & agencies",
-    price: "₹4,999",
-    period: "/month",
-    features: ["2,000 leads per month", "500 AI websites", "Automated outreach", "Advanced CRM & analytics", "Priority support"],
+    name: "Premium Plan",
+    price: "13,999",
+    originalPrice: "20,000",
+    gst: "2520",
+    features: [
+      "12 pages Website",
+      "1 Year Free Domain Name (.com .in .org)",
+      "1 Year Free Cloud Hosting",
+      "Advanced SEO Optimization",
+      "Premium Custom Design",
+      "Social Media Integration",
+      "Google Analytics Setup"
+    ],
     popular: true,
+    color: "purple"
   },
   {
-    name: "Agency",
-    desc: "For high-volume outreach",
-    price: "₹9,999",
-    period: "/month",
-    features: ["10,000+ leads per month", "Unlimited websites", "Smart outreach sequences", "Team collaboration", "White-label (optional)"],
+    name: "Premium E-commerce",
+    price: "21,999",
+    originalPrice: "30,000",
+    gst: "3960",
+    features: [
+      "30 pages Website",
+      "1 Year Free Domain Name (.com .in .org)",
+      "1 Year Free Cloud Hosting",
+      "20 Product Categories",
+      "30 Product Listing From Our Side",
+      "Premium E-commerce Design",
+      "Payment Gateway Integration"
+    ],
     popular: false,
-  },
+    color: "pink"
+  }
 ];
 
-const caseStudies = [
-  { name: "Hotel Aman Continental", loc: "Delhi, India", image: "hotel" },
-  { name: "FitZone Gym", loc: "Gurgaon, India", image: "gym" },
-  { name: "Sharma Dental Clinic", loc: "Noida, India", image: "clinic" },
-  { name: "Glow Beauty Salon", loc: "Delhi, India", image: "salon" },
-];
-
-const testimonials = [
-  { name: "Rohan Mehta", role: "Digital Marketer", text: '"I closed 5 clients in my first month using this platform. The AI websites are amazing!"' },
-  { name: "Sneha Verma", role: "Founder, MarketPeak", text: '"Super easy to use and saves hours of manual work. Highly recommended!"' },
-  { name: "Aarav Singh", role: "Freelancer", text: '"The outreach automation is a game changer. I can focus on closing, not searching."' },
+const countries = [
+  { name: "India", flag: "🇮🇳" },
+  { name: "USA", flag: "🇺🇸" },
+  { name: "UK", flag: "🇬🇧" },
+  { name: "Canada", flag: "🇨🇦" },
+  { name: "Germany", flag: "🇩🇪" },
+  { name: "France", flag: "🇫🇷" },
+  { name: "Australia", flag: "🇦🇺" },
+  { name: "UAE", flag: "🇦🇪" },
 ];
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
-  const [billing, setBilling] = useState("Monthly");
+  const [activeService, setActiveService] = useState(services[0].id);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -123,94 +137,125 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#0a0f1d] text-slate-300 font-sans selection:bg-blue-500/30">
-      
-      {/* Absolute Background Glows */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[20%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[150px]" />
-        <div className="absolute top-[40%] right-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-600/10 blur-[150px]" />
-        <div className="absolute bottom-[10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-800/10 blur-[150px]" />
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-overlay"></div>
-      </div>
+  const whatsappNumber = "919999999999"; 
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hi! I would like to discuss a website project.")}`;
 
+  const activeServiceData = services.find(s => s.id === activeService) || services[0];
+
+  return (
+    <div className="relative min-h-screen overflow-x-hidden bg-white text-slate-800 font-sans selection:bg-blue-100">
+      
       {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrollY > 20 ? "bg-[#0a0f1d]/80 backdrop-blur-xl border-b border-white/5 shadow-2xl" : "bg-transparent"}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrollY > 20 ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100" : "bg-transparent"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 transition-all duration-300">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="AI Agency Logo" width={160} height={50} className="h-10 w-auto object-contain" priority />
+              <Image src="/logo.png" alt="AI Agency Logo" width={180} height={60} className="h-12 w-auto object-contain drop-shadow-sm" priority />
             </Link>
             
             <div className="hidden lg:flex items-center gap-8">
-              <a href="#platform" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Platform</a>
-              <a href="#solutions" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Solutions</a>
-              <a href="#how-it-works" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">How It Works</a>
-              <a href="#pricing" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Pricing</a>
-              <a href="#case-studies" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Case Studies</a>
-            </div>
-
-            <div className="hidden lg:flex items-center gap-4">
-              <Link href="/login" className="px-5 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 transition-colors">
-                Sign In
-              </Link>
-              <Link href="/register" className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition-colors shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-                Get Started <ArrowRight className="inline w-4 h-4 ml-1" />
-              </Link>
+              <a href="#services" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Services</a>
+              <a href="#how-it-works" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">How It Works</a>
+              <a href="#pricing" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Pricing</a>
+              
+              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-slate-200">
+                <Link href="/login" className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors">
+                  <Lock className="w-4 h-4" /> Team Login
+                </Link>
+                <a href={whatsappLink} target="_blank" rel="noreferrer" className="px-5 py-2.5 rounded-full bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 hover:-translate-y-0.5">
+                  <MessageCircle className="w-4 h-4" /> WhatsApp Us
+                </a>
+              </div>
             </div>
             
-            <button className="lg:hidden p-2 text-slate-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <button className="lg:hidden p-2 text-slate-600" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-white border-b border-slate-100 overflow-hidden shadow-xl"
+            >
+              <div className="px-6 py-6 space-y-4">
+                <a href="#services" className="block text-lg font-bold text-slate-700" onClick={() => setMobileMenuOpen(false)}>Services</a>
+                <a href="#how-it-works" className="block text-lg font-bold text-slate-700" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
+                <a href="#pricing" className="block text-lg font-bold text-slate-700" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
+                <div className="pt-4 border-t border-slate-100 space-y-4">
+                  <Link href="/login" className="flex items-center gap-2 text-lg font-bold text-slate-700" onClick={() => setMobileMenuOpen(false)}>
+                    <Lock className="w-5 h-5" /> Team Login
+                  </Link>
+                  <a href={whatsappLink} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-blue-600 text-white text-lg font-bold" onClick={() => setMobileMenuOpen(false)}>
+                    <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* Bright 3D Hero Section */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50/50 min-h-[90vh] flex items-center">
+        {/* Decorative background shapes */}
+        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[800px] h-[800px] bg-gradient-to-bl from-blue-400/20 to-purple-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-300/20 to-transparent rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             
-            {/* Hero Copy */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="z-10"
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center lg:text-left z-10"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-6 text-xs font-semibold tracking-wide uppercase">
-                <Sparkles className="w-3 h-3" />
-                AI-Powered Growth for Local Businesses
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 mb-6 font-bold text-sm shadow-sm border border-blue-200/50">
+                <Sparkles className="w-4 h-4" />
+                <span>AI-Powered Growth for Local Businesses</span>
               </div>
               
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-white leading-[1.1]">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight mb-6 text-slate-900 leading-[1.1]">
                 Turn Local
                 <br />
                 Businesses Into
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                   Digital Businesses.
                 </span>
               </h1>
               
-              <p className="text-lg text-slate-400 mb-8 max-w-xl leading-relaxed">
+              <p className="text-lg sm:text-xl text-slate-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
                 Find businesses without websites, generate high-converting AI websites, and automate personalized outreach — all from one powerful platform.
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center gap-4 mb-10">
-                <Link href="/register" className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 text-white font-medium text-base hover:bg-blue-500 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(37,99,235,0.4)]">
-                  Start for Free <ArrowRight className="w-4 h-4" />
-                </Link>
-                <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white font-medium text-base hover:bg-white/10 transition-all flex items-center justify-center gap-2">
-                  <PlayCircle className="w-5 h-5" /> Watch Demo
-                </button>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
+                <a 
+                  href={whatsappLink} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 text-white font-bold text-lg flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 hover:shadow-blue-600/50 hover:-translate-y-1 transition-all"
+                >
+                  Start Your Project <ArrowRight className="w-5 h-5" />
+                </a>
+                <a 
+                  href="#services" 
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-white border-2 border-slate-200 text-slate-700 font-bold text-lg hover:border-blue-600 hover:text-blue-600 transition-all text-center shadow-sm"
+                >
+                  Explore Services
+                </a>
               </div>
-
-              <div className="flex items-center gap-4 text-sm text-slate-400">
+              
+              <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-slate-600 font-medium">
                 <div className="flex -space-x-2">
                   {[1,2,3,4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-[#0a0f1d] flex items-center justify-center">
+                    <div key={i} className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center shadow-sm">
                       <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="user" className="w-full h-full rounded-full" />
                     </div>
                   ))}
@@ -219,32 +264,37 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Hero 3D Complex Illustration (CSS representation of the laptop/cards) */}
+            {/* Light Theme 3D Complex Illustration */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative z-10 hidden lg:block h-[600px] perspective-[1000px]"
+              transition={{ duration: 1, delay: 0.2 }}
+              className="relative z-10 hidden lg:block h-[500px] perspective-[1000px]"
             >
-              {/* The "Laptop" Base */}
-              <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[80%] h-[300px] bg-slate-900/80 rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden rotate-x-[15deg] rotate-y-[-10deg] rotate-z-[2deg] transform-style-3d">
-                <div className="w-full h-6 bg-slate-800 border-b border-slate-700 flex items-center px-4 gap-2">
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
-                  <div className="w-2 h-2 rounded-full bg-amber-500" />
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
+              {/* The "Laptop" Base - Light Theme */}
+              <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[90%] h-[320px] bg-white rounded-2xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden rotate-x-[15deg] rotate-y-[-10deg] rotate-z-[2deg] transform-style-3d">
+                <div className="w-full h-8 bg-slate-100 border-b border-slate-200 flex items-center px-4 gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-amber-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
-                <div className="flex-1 p-4 flex gap-4">
-                   <div className="w-1/4 h-full bg-slate-800/50 rounded-lg flex flex-col gap-2 p-2">
-                      <div className="h-6 w-full bg-slate-700 rounded" />
-                      <div className="h-6 w-full bg-slate-700/50 rounded" />
-                      <div className="h-6 w-full bg-slate-700/50 rounded" />
+                <div className="flex-1 p-5 flex gap-5 bg-slate-50/50">
+                   <div className="w-1/4 h-full bg-white rounded-xl flex flex-col gap-3 p-3 border border-slate-100 shadow-sm">
+                      <div className="h-6 w-full bg-slate-100 rounded-md" />
+                      <div className="h-6 w-full bg-slate-100 rounded-md" />
+                      <div className="h-6 w-full bg-slate-100 rounded-md" />
+                      <div className="mt-auto h-8 w-full bg-blue-50 rounded-md border border-blue-100" />
                    </div>
-                   <div className="flex-1 h-full bg-slate-800/30 rounded-lg border border-slate-700/50 relative overflow-hidden">
+                   <div className="flex-1 h-full bg-white rounded-xl border border-slate-200 relative overflow-hidden shadow-sm">
                       {/* Fake Map Grid */}
-                      <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-[0_0_20px_#3b82f6]">
-                        <MapPin className="w-4 h-4 text-white" />
+                      <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/cubes.png')] opacity-[0.05]"></div>
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)]">
+                        <MapPin className="w-5 h-5 text-white" />
                       </div>
+                      
+                      {/* Map Pointers */}
+                      <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-red-500 rounded-full shadow-lg" />
+                      <div className="absolute bottom-1/3 right-1/4 w-4 h-4 bg-green-500 rounded-full shadow-lg" />
                    </div>
                 </div>
               </div>
@@ -253,30 +303,32 @@ export default function Home() {
               <motion.div 
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-[20%] left-0 w-64 bg-slate-900/90 backdrop-blur-xl border border-blue-500/30 rounded-xl p-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-20"
+                className="absolute top-[15%] left-[-5%] w-64 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl p-4 shadow-xl z-20"
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                    <Laptop className="w-4 h-4" />
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">
+                    <Laptop className="w-5 h-5" />
                   </div>
-                  <div className="text-sm font-semibold text-white">Generate Website</div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-800">Generate Website</div>
+                    <div className="text-xs text-slate-500 font-medium">in seconds</div>
+                  </div>
                 </div>
-                <div className="text-xs text-slate-400">in seconds</div>
               </motion.div>
 
               {/* Floating Element 2: Target Business Card */}
               <motion.div 
                 animate={{ y: [0, 20, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute top-[10%] right-[10%] w-72 bg-slate-900/95 backdrop-blur-xl border border-cyan-500/30 rounded-xl p-0 shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden z-30"
+                className="absolute top-[5%] right-[5%] w-72 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl p-0 shadow-2xl overflow-hidden z-30"
               >
-                <div className="h-24 bg-gradient-to-r from-cyan-600 to-blue-600 relative p-4">
-                   <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider">AI</div>
-                   <h4 className="text-white font-bold text-sm">Aman Restaurant</h4>
-                   <p className="text-cyan-100 text-xs">Delhi, India</p>
+                <div className="h-28 bg-gradient-to-r from-blue-500 to-indigo-600 relative p-5 flex flex-col justify-end">
+                   <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider shadow-sm">AI Generated</div>
+                   <h4 className="text-white font-bold text-lg leading-tight">Aman Restaurant</h4>
+                   <p className="text-blue-100 text-xs mt-1">Delhi, India</p>
                 </div>
-                <div className="p-4 bg-slate-900">
-                   <button className="w-full py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold shadow-[0_0_15px_rgba(37,99,235,0.5)]">Generate Website</button>
+                <div className="p-5 bg-white">
+                   <button className="w-full py-3 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-md hover:bg-slate-800 transition-colors">View Live Website</button>
                 </div>
               </motion.div>
 
@@ -284,22 +336,24 @@ export default function Home() {
               <motion.div 
                 animate={{ y: [0, -10, 0], rotateZ: [0, -2, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                className="absolute bottom-[25%] right-[5%] w-64 bg-slate-800/90 backdrop-blur-md border border-white/10 rounded-xl p-3 shadow-2xl z-40 flex items-center gap-4"
+                className="absolute bottom-[20%] right-[-10%] w-72 bg-white/90 backdrop-blur-md border border-slate-200 rounded-2xl p-4 shadow-2xl z-40 flex items-center gap-4"
               >
-                 <div className="w-16 h-16 rounded bg-gradient-to-br from-blue-500 to-purple-600 shrink-0"></div>
-                 <div>
-                    <h5 className="text-white text-sm font-bold">Sharma Auto Care</h5>
-                    <p className="text-slate-400 text-xs mb-2">No website</p>
+                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shrink-0 shadow-inner flex items-center justify-center">
+                    <Monitor className="w-8 h-8 text-white opacity-50" />
+                 </div>
+                 <div className="flex-1">
+                    <h5 className="text-slate-800 text-sm font-bold leading-tight">Sharma Auto Care</h5>
+                    <p className="text-red-500 font-semibold text-[10px] uppercase tracking-wider mb-2 mt-1">No Website Found</p>
                     <div className="flex gap-2">
-                       <button className="px-2 py-1 bg-white/10 rounded text-[10px] text-white">View Demo</button>
-                       <button className="px-2 py-1 bg-blue-600 rounded text-[10px] text-white">Outreach</button>
+                       <button className="flex-1 py-1.5 bg-slate-100 rounded-lg text-[10px] font-bold text-slate-600 border border-slate-200 hover:bg-slate-200">View Details</button>
+                       <button className="flex-1 py-1.5 bg-blue-600 rounded-lg text-[10px] font-bold text-white shadow-md hover:bg-blue-700">Send Pitch</button>
                     </div>
                  </div>
               </motion.div>
               
               {/* Handwritten note */}
-              <div className="absolute bottom-[10%] right-[-5%] rotate-[-10deg] font-serif italic text-cyan-400 text-lg opacity-80 pointer-events-none">
-                Automate Outreach<br/>Close Clients<br/>Grow
+              <div className="absolute bottom-[5%] left-[5%] rotate-[-10deg] font-serif italic text-blue-600 text-xl opacity-80 pointer-events-none drop-shadow-sm">
+                Automate Outreach<br/>Close Clients<br/>Grow Fast.
               </div>
 
             </motion.div>
@@ -307,18 +361,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-10 border-y border-white/5 bg-slate-900/30 backdrop-blur-md">
+      {/* Light Stats Section */}
+      <section className="py-12 border-y border-slate-100 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-200">
             {stats.map((stat, i) => (
-              <div key={i} className="flex items-center justify-center gap-4 px-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+              <div key={i} className="flex items-center justify-center gap-4 px-4 group">
+                <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-blue-600 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
                   <stat.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</div>
-                  <div className="text-xs sm:text-sm text-slate-400">{stat.label}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-slate-900">{stat.value}</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-500">{stat.label}</div>
                 </div>
               </div>
             ))}
@@ -326,22 +380,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4">
+      {/* How It Works - Light Theme */}
+      <section id="how-it-works" className="py-24 px-4 bg-white relative">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] -z-10 pointer-events-none" />
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-4 text-xs font-semibold tracking-wide uppercase">
-                Simple. Powerful. Automated.
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">How It Works</h2>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 mb-4 text-xs font-bold tracking-wide uppercase">
+              Simple. Powerful. Automated.
             </div>
-            <p className="text-slate-400">From finding businesses to closing clients — in just 4 simple steps.</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-4">How It Works</h2>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto font-medium">From finding businesses to closing clients — in just 4 simple steps.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
             {/* Connecting lines for desktop */}
-            <div className="hidden lg:block absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent -translate-y-1/2 -z-10" />
+            <div className="hidden lg:block absolute top-1/2 left-0 w-full h-[2px] bg-slate-100 -translate-y-1/2 -z-10" />
 
             {steps.map((step, i) => (
               <motion.div
@@ -350,23 +403,23 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#0f172a] border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors"
+                className="bg-white border border-slate-200 p-8 rounded-3xl relative overflow-hidden group hover:border-blue-400 hover:shadow-xl hover:shadow-blue-900/5 transition-all"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] group-hover:bg-blue-500/20 transition-colors" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 blur-[40px] group-hover:bg-blue-100 transition-colors" />
                 
-                <div className="flex items-center justify-between mb-6">
-                  <div className="text-sm font-bold text-cyan-400">{step.step}</div>
-                  <div className="w-10 h-10 rounded-lg bg-blue-900/50 flex items-center justify-center text-blue-400">
-                    <step.icon className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-8">
+                  <div className="text-sm font-black text-slate-300 group-hover:text-blue-200 transition-colors text-4xl">{step.step}</div>
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-inner group-hover:scale-110 transition-transform">
+                    <step.icon className="w-6 h-6" />
                   </div>
                 </div>
                 
-                <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{step.title}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed font-medium">{step.desc}</p>
 
                 {i < steps.length - 1 && (
-                  <div className="hidden lg:flex absolute right-[-15px] top-1/2 -translate-y-1/2 w-8 h-8 bg-[#0a0f1d] border border-white/5 rounded-full items-center justify-center z-10 text-slate-500">
-                    <ChevronRight className="w-4 h-4" />
+                  <div className="hidden lg:flex absolute right-[-20px] top-1/2 -translate-y-1/2 w-10 h-10 bg-white border-2 border-slate-100 rounded-full items-center justify-center z-10 text-slate-400 shadow-sm">
+                    <ChevronRight className="w-5 h-5" />
                   </div>
                 )}
               </motion.div>
@@ -375,270 +428,235 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Our Solutions */}
-      <section id="solutions" className="py-24 px-4 bg-[#070b14] border-y border-white/5">
+      {/* Services Tabs Section (from White Theme) */}
+      <section id="services" className="py-24 px-4 bg-slate-50 relative border-y border-slate-200">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mb-4 text-xs font-semibold tracking-wide uppercase">
-                Everything You Need
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">Our Solutions</h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <p className="text-slate-400">Tools to help you find, engage and convert local businesses.</p>
-              <Link href="#" className="hidden sm:flex text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors items-center gap-1">
-                View All Solutions <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-6 tracking-tight">Our Services</h2>
+            <p className="text-slate-600 max-w-3xl mx-auto text-lg leading-relaxed font-medium">
+              Your Business Deserves a Great Website. We make professional web design simple and accessible. By combining custom development with responsive design, we ensure your site looks perfect on every screen.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-            {solutions.map((sol, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className={`bg-[#0f172a] border border-white/5 p-6 rounded-2xl flex flex-col items-center text-center group hover:border-blue-500/50 hover:bg-slate-900 transition-all cursor-default ${i === 0 || i === 1 ? 'lg:col-span-2' : 'lg:col-span-2'}`}
-              >
-                <div className="w-16 h-16 rounded-2xl bg-blue-900/30 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(37,99,235,0.1)] group-hover:shadow-[0_0_30px_rgba(37,99,235,0.3)]">
-                  <sol.icon className="w-8 h-8" />
-                </div>
-                <h3 className="text-base font-bold text-white mb-2">{sol.title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{sol.desc}</p>
-              </motion.div>
-            ))}
+          <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[500px]">
+            {/* Sidebar Tabs */}
+            <div className="w-full lg:w-1/3 bg-slate-50 border-r border-slate-200 flex flex-col">
+              {services.map((s) => {
+                const isActive = activeService === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => setActiveService(s.id)}
+                    className={`flex items-center gap-4 w-full p-6 text-left relative transition-colors ${isActive ? "bg-white" : "hover:bg-slate-100"}`}
+                  >
+                    {isActive && (
+                      <motion.div layoutId="activeTabIndicator" className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-600" />
+                    )}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${isActive ? "bg-blue-100 text-blue-600" : "bg-white border border-slate-200 text-slate-500"}`}>
+                      <s.icon className="w-5 h-5" />
+                    </div>
+                    <span className={`font-bold text-sm sm:text-base ${isActive ? "text-blue-600" : "text-slate-700"}`}>{s.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+            
+            {/* Tab Content */}
+            <div className="w-full lg:w-2/3 p-8 sm:p-12 relative bg-white">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeService}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full flex flex-col"
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                      <activeServiceData.icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-3xl font-black text-slate-900">{activeServiceData.title}</h3>
+                  </div>
+                  
+                  <p className="text-lg text-slate-600 leading-relaxed mb-10 font-medium">
+                    {activeServiceData.desc}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-auto">
+                    {technologies.map((tech, i) => (
+                      <div key={i} className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group cursor-default">
+                        <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-2xl border border-slate-100 group-hover:scale-110 transition-transform">
+                          {tech.icon}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-slate-800 text-sm">{tech.name}</h4>
+                          <p className="text-xs font-bold text-slate-400 tracking-wider mt-1">{tech.sub}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-10 pt-8 border-t border-slate-100">
+                    <a href={whatsappLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-1">
+                      <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
+                    </a>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SaaS Pricing Section */}
-      <section id="pricing" className="py-24 px-4 relative">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-blue-600/5 blur-[200px] pointer-events-none -z-10" />
-        
+      {/* Pricing Section (Web Design Agency Pricing) */}
+      <section id="pricing" className="py-24 px-4 bg-white relative">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-4 text-xs font-semibold tracking-wide uppercase">
-              Fair Pricing
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-4">Plans for Every<br/>Stage of Growth</h2>
-            <p className="text-slate-400 text-lg mb-8">Start small, scale big. No hidden fees.</p>
-            
-            <div className="inline-flex items-center p-1 bg-slate-900 rounded-xl border border-white/5">
-              <button 
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${billing === "Monthly" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
-                onClick={() => setBilling("Monthly")}
-              >
-                Monthly
-              </button>
-              <button 
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${billing === "Yearly" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"}`}
-                onClick={() => setBilling("Yearly")}
-              >
-                Yearly <span className="px-1.5 py-0.5 rounded text-[10px] bg-green-500/20 text-green-400">Save 20%</span>
-              </button>
-            </div>
+          <div className="text-center mb-16">
+            <h3 className="text-lg font-bold text-blue-600 mb-2">Web Development and Website Design</h3>
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-6">Plans & Pricing</h2>
+            <p className="text-slate-600 max-w-3xl mx-auto text-lg leading-relaxed font-medium">
+              We are among India's best web solution companies committed to offering full ROI-driven customized web services at affordable prices.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch max-w-5xl mx-auto">
-            {pricing.map((plan, i) => (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            {pricingPlans.map((plan, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative rounded-3xl p-8 flex flex-col ${
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className={`relative rounded-3xl overflow-hidden flex flex-col ${
                   plan.popular 
-                    ? "bg-[#0f172a] border-2 border-blue-500 shadow-[0_0_40px_rgba(37,99,235,0.2)] md:-translate-y-4" 
-                    : "bg-[#0f172a] border border-white/10"
+                    ? "bg-blue-700 text-white shadow-2xl shadow-blue-900/20 transform lg:-translate-y-4" 
+                    : "bg-white text-slate-800 shadow-xl border border-slate-200"
                 }`}
               >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
-                    Most Popular
+                <div className="p-8 sm:p-10 text-center relative">
+                  {/* Package Title Tag */}
+                  <div className={`inline-block px-6 py-2 rounded-full font-bold text-sm mb-8 shadow-sm ${plan.popular ? "bg-orange-500 text-white" : "bg-red-500 text-white"}`}>
+                    {plan.name}
                   </div>
-                )}
-                
-                <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-                <p className="text-sm text-slate-400 mb-6">{plan.desc}</p>
-                
-                <div className="flex items-end gap-1 mb-8">
-                  <span className="text-4xl font-bold text-white">{plan.price}</span>
-                  <span className="text-slate-500 text-sm mb-1">{plan.period}</span>
+                  
+                  {/* Vector Illustration Placeholder */}
+                  <div className="w-40 h-40 mx-auto mb-8 relative">
+                     <div className={`absolute inset-0 rounded-full blur-2xl opacity-50 ${plan.popular ? "bg-white/20" : "bg-blue-100"}`} />
+                     <div className={`relative z-10 w-full h-full rounded-full border-4 flex items-center justify-center shadow-inner ${plan.popular ? "border-blue-400 bg-blue-600" : "border-slate-100 bg-white"}`}>
+                        <Monitor className={`w-16 h-16 ${plan.popular ? "text-white" : "text-blue-600"}`} />
+                     </div>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className={`text-xl font-bold line-through ${plan.popular ? "text-blue-300" : "text-slate-400"}`}>₹{plan.originalPrice}</span>
+                  </div>
+                  <div className="flex items-start justify-center gap-1 mb-2">
+                    <span className="text-3xl font-bold mt-2">₹</span>
+                    <span className="text-6xl font-black tracking-tighter">{plan.price}</span>
+                  </div>
+                  <p className={`text-xs font-bold tracking-wider ${plan.popular ? "text-blue-200" : "text-slate-500"}`}>( + 18% GST ₹ {plan.gst} )</p>
                 </div>
 
-                <ul className="space-y-4 mb-10 flex-1">
-                  {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
-                      <span className="text-sm text-slate-300">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link 
-                  href="/register" 
-                  className={`w-full py-3 rounded-xl font-medium text-center text-sm transition-all ${
-                    plan.popular 
-                      ? "bg-blue-600 text-white hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)]" 
-                      : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
-                  }`}
-                >
-                  {plan.name === "Agency" ? "Contact Sales" : `Start ${plan.name} Plan`}
-                </Link>
+                <div className={`flex-1 p-8 sm:p-10 pt-0 flex flex-col border-t mt-4 ${plan.popular ? "border-blue-600" : "border-slate-100"}`}>
+                  <h4 className={`text-center font-bold mb-6 ${plan.popular ? "text-white" : "text-slate-800"}`}>Features Includes</h4>
+                  <ul className="space-y-4 mb-10 flex-1">
+                    {plan.features.map((feature, j) => (
+                      <li key={j} className="flex items-start gap-3">
+                        <CheckCircle2 className={`w-5 h-5 shrink-0 ${plan.popular ? "text-blue-300" : "text-blue-600"}`} />
+                        <span className={`text-sm font-semibold leading-relaxed ${plan.popular ? "text-white" : "text-slate-700"}`}>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <a 
+                    href={whatsappLink} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className={`w-full py-4 rounded-full font-bold text-center transition-all ${
+                      plan.popular 
+                        ? "bg-white text-blue-700 hover:bg-zinc-100 shadow-xl" 
+                        : "bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-600 hover:text-white"
+                    }`}
+                  >
+                    Select Plan
+                  </a>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Case Studies */}
-      <section id="case-studies" className="py-24 px-4 bg-[#070b14] border-t border-white/5 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mb-4 text-xs font-semibold tracking-wide uppercase">
-              Real Results
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Generated Websites<br/>for Real Businesses</h2>
-            <p className="text-slate-400 text-sm mb-4">See how AI-generated websites help local businesses go digital.</p>
-            <Link href="#" className="text-blue-400 text-sm font-medium hover:text-blue-300 flex items-center gap-1">
-              View All Case Studies <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-8 snap-x scrollbar-hide">
-            {caseStudies.map((study, i) => (
-              <div key={i} className="min-w-[280px] sm:min-w-[320px] bg-[#0f172a] rounded-2xl border border-white/5 overflow-hidden snap-start group cursor-pointer hover:border-blue-500/50 transition-colors">
-                <div className="h-40 bg-slate-800 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent z-10" />
-                  <div className="w-full h-full bg-slate-700 flex items-center justify-center text-slate-500 group-hover:scale-105 transition-transform duration-500">
-                    <Globe className="w-12 h-12 opacity-50" />
-                  </div>
-                </div>
-                <div className="p-5 relative z-20 -mt-8">
-                  <h3 className="font-bold text-white text-base">{study.name}</h3>
-                  <p className="text-xs text-slate-400 mb-4">{study.loc}</p>
-                  <button className="px-4 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 text-xs font-medium border border-blue-500/20 group-hover:bg-blue-600 group-hover:text-white transition-colors flex items-center gap-1">
-                    View Demo <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
+      {/* Serving In Section */}
+      <section className="py-20 bg-slate-50 border-y border-slate-200 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 text-center mb-10">
+          <h3 className="text-xl font-black text-slate-800 uppercase tracking-widest">We Are Serving In</h3>
+          <div className="w-16 h-1 bg-blue-600 mx-auto mt-4 rounded-full" />
+        </div>
+        
+        <div className="relative flex overflow-x-hidden group py-4">
+          <div className="flex animate-marquee group-hover:[animation-play-state:paused] whitespace-nowrap">
+            {[...countries, ...countries, ...countries].map((country, i) => (
+              <div key={i} className="flex flex-col items-center justify-center mx-12">
+                <span className="text-5xl mb-3 drop-shadow-md">{country.flag}</span>
+                <span className="text-sm font-bold text-slate-600">{country.name}</span>
               </div>
             ))}
           </div>
         </div>
+
+        <style jsx global>{`
+          @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-33.33%); }
+          }
+          .animate-marquee {
+            animation: marquee 30s linear infinite;
+          }
+        `}</style>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 px-4 border-t border-white/5">
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white pt-20 pb-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-4 text-xs font-semibold tracking-wide uppercase">
-              What Our Users Say
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Trusted by Builders<br/>Across India</h2>
-            <p className="text-slate-400 text-sm">Helping agencies, freelancers and entrepreneurs grow faster.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <div key={i} className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center">
-                    <img src={`https://i.pravatar.cc/100?img=${i+20}`} alt={t.name} className="w-full h-full rounded-full" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-sm">{t.name}</h4>
-                    <p className="text-xs text-slate-400">{t.role}</p>
-                  </div>
-                </div>
-                <p className="text-sm text-slate-300 italic mb-4">{t.text}</p>
-                <div className="flex gap-1 text-amber-500">
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Footer Wrapper */}
-      <section className="px-4 pb-24">
-        <div className="max-w-7xl mx-auto bg-gradient-to-r from-blue-900/40 to-[#0f172a] border border-blue-500/20 rounded-[2rem] p-8 sm:p-12 relative overflow-hidden">
-          {/* Earth/Globe graphic placeholder */}
-          <div className="absolute -bottom-40 right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-500/10 border border-blue-500/20 blur-[2px] opacity-50 flex items-start justify-center">
-             <div className="w-[480px] h-[480px] rounded-full border border-blue-400/20 mt-4" />
-          </div>
-          
-          <div className="relative z-10 max-w-lg">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2">Your next client is already online.</h2>
-            <p className="text-slate-400 text-xs tracking-widest uppercase mb-8">Find. Generate. Reach. Convert. In Minutes.</p>
-            <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/30">
-              Start Finding Businesses <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          
-          <div className="hidden md:block absolute bottom-12 right-12 font-serif italic text-cyan-300 text-xl opacity-70 transform -rotate-6">
-            A More<br/>Digital India
-          </div>
-        </div>
-      </section>
-
-      {/* Main Footer */}
-      <footer className="border-t border-white/5 py-12 px-4 bg-[#070b14]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
-            <div className="col-span-2">
-              <Link href="/" className="mb-4 block">
-                <Image src="/logo.png" alt="AI Agency Logo" width={140} height={40} className="h-8 w-auto object-contain brightness-0 invert" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 border-b border-slate-800 pb-16">
+            <div className="md:col-span-2">
+              <Link href="/" className="mb-6 block bg-white p-4 rounded-2xl w-fit">
+                <Image src="/logo.png" alt="AI Agency Logo" width={200} height={70} className="h-14 w-auto object-contain" />
               </Link>
-              <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
-                Helping local businesses go digital with AI.
+              <p className="text-slate-400 max-w-md leading-relaxed text-sm">
+                100% Trusted and Registered Company providing the best web development and web design services. We ensure that a well-developed and attractive website helps our clients record ROI-driven results.
               </p>
             </div>
             
             <div>
-              <h4 className="font-bold text-white text-xs mb-4">Product</h4>
-              <ul className="space-y-2 text-xs text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Platform</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Case Studies</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Roadmap</a></li>
+              <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Quick Links</h4>
+              <ul className="space-y-3 text-sm font-medium">
+                <li><a href="#services" className="text-slate-400 hover:text-white transition-colors">Services</a></li>
+                <li><a href="#how-it-works" className="text-slate-400 hover:text-white transition-colors">How It Works</a></li>
+                <li><a href="#pricing" className="text-slate-400 hover:text-white transition-colors">Plans & Pricing</a></li>
+                <li><a href={whatsappLink} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors">Contact Us</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-white text-xs mb-4">Resources</h4>
-              <ul className="space-y-2 text-xs text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Guides</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-white text-xs mb-4">Company</h4>
-              <ul className="space-y-2 text-xs text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Legal</h4>
+              <ul className="space-y-3 text-sm font-medium">
+                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Terms & Conditions</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/5">
-            <div className="text-xs text-slate-600">
-              &copy; {new Date().getFullYear()} AI Agency. All rights reserved.
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
+            <div className="font-medium">
+              &copy; {new Date().getFullYear()} AI Agency Automation Platform. All rights reserved.
             </div>
-            <div className="text-xs text-slate-600 flex items-center gap-1">
-              Built with <span className="text-red-500">❤️</span> for a more digital world.
+            <div className="flex items-center gap-4">
+              <Link href="/login" className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-bold text-white transition-colors flex items-center gap-2">
+                <Lock className="w-4 h-4" /> Team Login
+              </Link>
             </div>
           </div>
         </div>
