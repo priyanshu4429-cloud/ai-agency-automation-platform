@@ -166,7 +166,7 @@ const testimonials = [
 
 declare global {
   interface Window {
-    Razorpay: (options: Record<string, unknown>) => { open: () => void };
+    Razorpay: any;
   }
 }
 
