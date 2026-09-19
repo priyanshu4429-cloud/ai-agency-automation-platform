@@ -18,7 +18,6 @@ export default function LeadsPage() {
   
   // Bulk selection state
   const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
-  const [bulkProgress, setBulkProgress] = useState<{total: number, current: number, status: string} | null>(null);
 
   useEffect(() => {
     fetchLeads();
@@ -63,75 +62,7 @@ export default function LeadsPage() {
     );
   }
 
-  async function handleBulkPitch() {
-    if (selectedLeads.length === 0) return;
-    
-    // First validate with backend
-    setBulkProgress({ total: selectedLeads.length, current: 0, status: "Initializing..." });
-    
-    try {
-      const res = await fetch("/api/leads/bulk-pitch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ leadIds: selectedLeads })
-      });
-      const data = await res.json();
-      
-      if (!data.success || !data.leads) {
-        alert(data.error || "Failed to initialize bulk pitch");
-        setBulkProgress(null);
-        return;
-      }
-      
-      const validLeads = data.leads;
-      setBulkProgress({ total: validLeads.length, current: 0, status: `Found ${validLeads.length} valid leads with emails.` });
-      
-      if (validLeads.length === 0) {
-        alert("None of the selected leads have an email address.");
-        setBulkProgress(null);
-        return;
-      }
 
-      // Process each lead sequentially to avoid timeouts/rate limits
-      for (let i = 0; i < validLeads.length; i++) {
-        const lead = validLeads[i];
-        
-        // 1. Generate Website
-        setBulkProgress({ total: validLeads.length, current: i + 1, status: `Generating website for ${lead.businessName}...` });
-        
-        try {
-          const webRes = await fetch(`/api/demo/generate/${lead.id}`, { method: "POST" });
-          if (!webRes.ok) throw new Error("Website generation failed");
-          
-          // 2. Send Email
-          setBulkProgress({ total: validLeads.length, current: i + 1, status: `Sending email to ${lead.businessName}...` });
-          
-          const emailRes = await fetch("/api/emails/send", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ leadId: lead.id })
-          });
-          if (!emailRes.ok) throw new Error("Email sending failed");
-          
-        } catch (err: any) {
-          console.error(`Failed for lead ${lead.id}:`, err);
-          // Continue to next lead even if one fails
-        }
-      }
-      
-      setBulkProgress({ total: validLeads.length, current: validLeads.length, status: "Bulk outreach completed!" });
-      setTimeout(() => {
-        setBulkProgress(null);
-        setSelectedLeads([]);
-        fetchLeads(); // Refresh list to show updated statuses
-      }, 3000);
-      
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred during bulk pitch.");
-      setBulkProgress(null);
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -140,26 +71,7 @@ export default function LeadsPage() {
           <h1 className="text-2xl font-bold">Leads</h1>
           <p className="text-sm text-muted-foreground">Manage and track your business leads.</p>
         </div>
-        
-        {bulkProgress ? (
-          <div className="glass px-4 py-2 rounded-lg flex items-center gap-3 w-full sm:w-auto">
-            <Loader2 className="w-4 h-4 animate-spin text-primary" />
-            <div className="text-sm">
-              <span className="font-semibold text-primary">{bulkProgress.current} / {bulkProgress.total}</span>
-              <span className="text-muted-foreground ml-2">{bulkProgress.status}</span>
-            </div>
-          </div>
-        ) : (
-          selectedLeads.length > 0 && (
-            <button
-              onClick={handleBulkPitch}
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-colors flex items-center gap-2 shadow-lg pulse-glow"
-            >
-              <Zap className="w-4 h-4" />
-              Auto-Pitch {selectedLeads.length} Leads
-            </button>
-          )
-        )}
+
       </div>
 
       <div className="glass rounded-xl p-4">
